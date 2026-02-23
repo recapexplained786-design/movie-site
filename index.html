@@ -78,30 +78,34 @@
   </div>
 
 <script>
-function generateScript() {
-  const movie = document.getElementById("movieInput").value.trim();
-  const output = document.getElementById("output");
+async function generate(){
+  const movie=document.getElementById("movie").value.trim();
+  const out=document.getElementById("out");
 
-  if (!movie) {
-    output.textContent = "⚠️ Please enter a movie name";
+  if(!movie){
+    out.innerText="Enter movie name";
     return;
   }
 
-  // demo script generator
-  output.textContent =
-`यह कहानी है फिल्म "${movie}" की।
+  out.innerText="Generating 10–15 min script...";
 
-एक ऐसे व्यक्ति की कहानी, जो अपने सपनों को पूरा करने के लिए
-हर मुश्किल का सामना करता है।
+  try{
+    const prompt =
+      "Write a 10–15 minute Hindi YouTube movie explanation script of "+movie+
+      " with a strong cinematic hook, emotional narration, suspenseful storytelling, full story breakdown, climax explanation and impactful ending. "+
+      "Make it highly engaging and conversational like a professional movie explanation channel. "+
+      "Minimum 1800 words. Include hook, story, twists and outro CTA.";
 
-लेकिन उसकी जिंदगी में एक ऐसा मोड़ आता है
-जो सब कुछ बदल देता है।
+    const res = await fetch(
+      "https://api.allorigins.win/raw?url="+encodeURIComponent(prompt)
+    );
 
-अब सवाल यह है —
-क्या वह अपने डर को हरा पाएगा?
-या किस्मत उसे हमेशा के लिए तोड़ देगी?
+    const text = await res.text();
+    out.innerText = text || "No script generated";
 
-यह जानने के लिए देखिए "${movie}"।`;
+  }catch(e){
+    out.innerText="Error generating script";
+  }
 }
 </script>
 
