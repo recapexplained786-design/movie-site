@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie → Hindi Script</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body{
+      background:#0b0f19;
+      color:#fff;
+      font-family:Arial,Helvetica,sans-serif;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      margin:0;
+    }
+    .card{
+      width:90%;
+      max-width:600px;
+      background:#111827;
+      padding:25px;
+      border-radius:12px;
+      box-shadow:0 0 20px rgba(0,0,0,0.4);
+    }
+    h1{
+      margin-top:0;
+      text-align:center;
+    }
+    input{
+      width:100%;
+      padding:12px;
+      border-radius:8px;
+      border:none;
+      margin-bottom:15px;
+      font-size:16px;
+    }
+    button{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:8px;
+      background:#ef4444;
+      color:#fff;
+      font-size:16px;
+      cursor:pointer;
+    }
+    button:hover{
+      background:#dc2626;
+    }
+    #result{
+      margin-top:20px;
+      background:#0b1220;
+      padding:15px;
+      border-radius:8px;
+      min-height:150px;
+      white-space:pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎬 Movie → Hindi Script</h1>
+    <input id="movie" placeholder="Enter movie name (e.g. Titanic)">
+    <button onclick="generate()">Generate Script</button>
+    <div id="result">No script generated</div>
+  </div>
+
+<script>
+async function generate(){
+  const movie = document.getElementById("movie").value.trim();
+  const result = document.getElementById("result");
+
+  if(!movie){
+    result.innerText = "Enter movie name";
+    return;
+  }
+
+  result.innerText = "Generating...";
+
+  try{
+    const res = await fetch("/api/generate",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({movie})
+    });
+
+    const data = await res.json();
+
+    if(data.script){
+      result.innerText = data.script;
+    }else{
+      result.innerText = data.error || "No script generated";
+    }
+
+  }catch(err){
+    result.innerText = "Error: "+err.message;
+  }
+}
+</script>
+</body>
+</html>
