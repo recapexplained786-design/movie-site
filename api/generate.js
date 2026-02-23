@@ -7,34 +7,34 @@ export default async function handler(req, res) {
     const { movie } = req.body;
 
     if (!movie) {
-      return res.status(400).json({ error: "No movie provided" });
+      return res.status(400).json({ error: "Movie name required" });
     }
 
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-5-nano",
-        input: `Explain the movie ${movie} in Hindi in a YouTube narration style.`,
-      }),
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: `Explain the movie ${movie} in Hindi in a YouTube narration style script.`
+          }
+        ],
+        max_tokens: 700
+      })
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      console.error(data);
-      return res.status(500).json({ error: "OpenAI error" });
-    }
+    const script =
+      data?.choices?.[0]?.message?.content || "Script generate failed";
 
-    const text = data.output?.[0]?.content?.[0]?.text || "No script";
-
-    return res.status(200).json({ script: text });
-
+    res.status(200).json({ script });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: err.message });
   }
 }
