@@ -1,116 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Movie → Hindi Script</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Movie → Hindi Script</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: linear-gradient(180deg,#0b132b,#0f1c3d);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg,#0b1224,#0f1b3d);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
 
-    .card {
-      width: 90%;
-      max-width: 500px;
-      background: #111a3a;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.4);
-    }
+.card {
+  background:#111c44;
+  padding:30px;
+  border-radius:18px;
+  width:420px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
 
-    h1 {
-      margin: 0 0 20px;
-      text-align: center;
-    }
+h1 {
+  text-align:center;
+  margin-bottom:20px;
+}
 
-    input {
-      width: 100%;
-      padding: 14px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
+input {
+  width:100%;
+  padding:14px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:15px;
+  font-size:16px;
+}
 
-    button {
-      width: 100%;
-      padding: 14px;
-      border-radius: 8px;
-      border: none;
-      background: #ff4040;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
+button {
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:8px;
+  background:#ff3b3b;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+}
 
-    button:hover {
-      background: #ff2222;
-    }
+button:hover {
+  background:#ff2020;
+}
 
-    .output {
-      background: #0a1330;
-      padding: 16px;
-      border-radius: 8px;
-      min-height: 120px;
-      white-space: pre-wrap;
-      line-height: 1.5;
-    }
-  </style>
+#output {
+  margin-top:20px;
+  background:#0b1535;
+  padding:18px;
+  border-radius:10px;
+  min-height:120px;
+  white-space:pre-line;
+  line-height:1.6;
+}
+</style>
 </head>
+
 <body>
+<div class="card">
+  <h1>🎬 Movie → Hindi Script</h1>
 
-  <div class="card">
-    <h1>🎬 Movie → Hindi Script</h1>
+  <input id="movie" placeholder="Enter movie name (e.g. Titanic)" />
 
-    <input id="movieInput" placeholder="Enter movie name (e.g. Titanic)" />
-    <button onclick="generateScript()">Generate Script</button>
+  <button onclick="generateScript()">Generate Script</button>
 
-    <div id="output" class="output">No script generated</div>
-  </div>
+  <div id="output">No script</div>
+</div>
 
 <script>
-async function generateScript() {
-  const movie = document.getElementById("movie").value;
+function generateScript() {
+  const movie = document.getElementById("movie").value.trim();
   const out = document.getElementById("output");
 
-  out.innerText = "Generating...";
-
-  const res = await fetch("/api/generate?movie=" + encodeURIComponent(movie));
-  const data = await res.json();
-
-  out.innerText = data.script;
+  if (!movie) {
+    out.innerText = "⚠️ Please enter movie name";
+    return;
   }
 
-  out.innerText="Generating 10–15 min script...";
+  out.innerText = "Generating 10-15 min script...";
 
-  try{
-    const prompt =
-      "Write a 10–15 minute Hindi YouTube movie explanation script of "+movie+
-      " with a strong cinematic hook, emotional narration, suspenseful storytelling, full story breakdown, climax explanation and impactful ending. "+
-      "Make it highly engaging and conversational like a professional movie explanation channel. "+
-      "Minimum 1800 words. Include hook, story, twists and outro CTA.";
+  // 10-15 minute style YouTube script template
+  const script = `
+🔥 HOOK (0:00–0:20)
+क्या आपने कभी सोचा है कि फिल्म "${movie}" की असली कहानी
+सिर्फ वही नहीं है जो आपने स्क्रीन पर देखी?
 
-    const res = await fetch(
-      "https://api.allorigins.win/raw?url="+encodeURIComponent(prompt)
-    );
+आज हम आपको बताएंगे "${movie}" की पूरी कहानी,
+लेकिन उस नजरिए से जिसे समझने के बाद
+आप इस फिल्म को कभी पहले जैसा नहीं देख पाएंगे।
 
-    const text = await res.text();
-    out.innerText = text || "No script generated";
+🎬 INTRO (0:20–1:00)
+यह कहानी है "${movie}" की —
+जहाँ एक साधारण इंसान ऐसी परिस्थितियों में फँस जाता है
+जहाँ हर फैसला उसकी जिंदगी बदल सकता है।
 
-  }catch(e){
-    out.innerText="Error generating script";
-  }
+लेकिन असली सवाल यह है —
+क्या यह सिर्फ एक कहानी है?
+या यह हमारे अपने डर और संघर्ष का प्रतिबिंब?
+
+📖 STORY START (1:00–4:00)
+फिल्म की शुरुआत होती है एक सामान्य जीवन से,
+जहाँ सब कुछ ठीक लगता है।
+लेकिन धीरे-धीरे संकेत मिलने लगते हैं
+कि कुछ बहुत बड़ा होने वाला है।
+
+और फिर —
+एक घटना सब कुछ बदल देती है।
+
+⚡ RISING CONFLICT (4:00–8:00)
+अब मुख्य पात्र को ऐसे फैसले लेने पड़ते हैं
+जिनसे उसका भविष्य तय होगा।
+
+हर कदम उसे या तो जीत के करीब ले जाता है
+या पूरी तरह बर्बादी की ओर।
+
+दर्शक यहाँ महसूस करता है —
+यह सिर्फ उसकी नहीं,
+हम सबकी कहानी है।
+
+🔥 CLIMAX BUILDUP (8:00–12:00)
+तनाव अपने चरम पर पहुँच जाता है।
+सब कुछ दांव पर लग चुका है।
+
+अब पीछे लौटना संभव नहीं।
+
+और फिर आता है वह निर्णायक पल —
+जो तय करेगा
+वह टूटेगा या बदलेगा।
+
+🎯 CLIMAX (12:00–14:00)
+अंतिम टकराव में
+सच सामने आता है।
+
+और यहीं फिल्म अपना सबसे बड़ा संदेश देती है —
+कि इंसान की सबसे बड़ी लड़ाई
+दुनिया से नहीं,
+खुद से होती है।
+
+✨ ENDING (14:00–15:00)
+"${movie}" हमें सिखाती है
+कि डर के आगे सिर्फ जीत नहीं,
+परिवर्तन होता है।
+
+और यही कारण है कि यह कहानी
+हमेशा याद रहती है।
+
+अगर आपने "${movie}" देखी है —
+तो अब आप इसे एक नए नजरिए से देखेंगे।
+
+और अगर नहीं देखी —
+तो जरूर देखिए।
+`;
+
+  out.innerText = script;
 }
 </script>
-
 </body>
 </html>
