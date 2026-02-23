@@ -53,23 +53,36 @@
   </div>
 
 <script>
-async function gen() {
-  const movie = document.getElementById("movie").value.trim();
-  const out = document.getElementById("out");
+async function generateScript() {
+  const movie = document.querySelector("input").value.trim();
+  const output = document.getElementById("output");
 
-  if(!movie){
-    out.innerText="Enter movie name";
+  if (!movie) {
+    output.innerText = "Enter movie name";
     return;
   }
 
-  out.innerText="Generating...";
+  output.innerText = "Generating...";
 
-  try{
-    const res = await fetch(`/api/generate?movie=${encodeURIComponent(movie)}`);
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ movie })
+    });
+
     const data = await res.json();
-    out.innerText = data.script || "No script";
-  }catch(e){
-    out.innerText="Error";
+
+    if (data.script) {
+      output.innerText = data.script;
+    } else {
+      output.innerText = "Script generate failed";
+    }
+
+  } catch (e) {
+    output.innerText = "Error connecting API";
   }
 }
 </script>
