@@ -78,13 +78,16 @@
   </div>
 
 <script>
-async function generate(){
-  const movie=document.getElementById("movie").value.trim();
-  const out=document.getElementById("out");
+async function generateScript() {
+  const movie = document.getElementById("movie").value;
+  const out = document.getElementById("output");
 
-  if(!movie){
-    out.innerText="Enter movie name";
-    return;
+  out.innerText = "Generating...";
+
+  const res = await fetch("/api/generate?movie=" + encodeURIComponent(movie));
+  const data = await res.json();
+
+  out.innerText = data.script;
   }
 
   out.innerText="Generating 10–15 min script...";
