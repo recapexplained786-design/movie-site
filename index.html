@@ -1,41 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Movie → Hindi Script</title>
   <style>
-    body {font-family: Arial; background:#0b132b; color:white; padding:40px}
-    .box{max-width:600px;margin:auto;background:#111c44;padding:30px;border-radius:12px}
-    input{width:100%;padding:12px;border-radius:8px;border:none;font-size:16px}
-    button{margin-top:15px;width:100%;padding:12px;background:#e63946;color:white;border:none;border-radius:8px;font-size:18px}
-    .out{margin-top:20px;background:#0a0f2c;padding:20px;border-radius:8px;min-height:120px}
+    body {
+      background:#0f172a;
+      color:white;
+      font-family:Arial;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+    .box {
+      background:#111827;
+      padding:30px;
+      border-radius:12px;
+      width:400px;
+      text-align:center;
+    }
+    input {
+      width:100%;
+      padding:12px;
+      border-radius:6px;
+      border:none;
+      margin-bottom:15px;
+    }
+    button {
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:6px;
+      background:#ef4444;
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .out {
+      margin-top:15px;
+      text-align:left;
+      white-space:pre-wrap;
+    }
   </style>
 </head>
 <body>
   <div class="box">
     <h2>🎬 Movie → Hindi Script</h2>
-    <input id="movie" placeholder="Enter movie name" />
+    <input id="movie" placeholder="Enter movie name">
     <button onclick="gen()">Generate Script</button>
-    <div class="out" id="out">No script</div>
+    <div id="out" class="out">No script</div>
   </div>
 
 <script>
-async function gen(){
-  const movie = document.getElementById("movie").value;
+async function gen() {
+  const movie = document.getElementById("movie").value.trim();
   const out = document.getElementById("out");
-  out.innerText = "Generating...";
+
+  if(!movie){
+    out.innerText="Enter movie name";
+    return;
+  }
+
+  out.innerText="Generating...";
 
   try{
-    const r = await fetch("/api/generate",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ movie })
-    });
-
-    const d = await r.json();
-    out.innerText = d.script || "Failed";
+    const res = await fetch(`/api/generate?movie=${encodeURIComponent(movie)}`);
+    const data = await res.json();
+    out.innerText = data.script || "No script";
   }catch(e){
-    out.innerText = "Error";
+    out.innerText="Error";
   }
 }
 </script>
