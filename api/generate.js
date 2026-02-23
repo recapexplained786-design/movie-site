@@ -1,15 +1,10 @@
 export default async function handler(req, res) {
-  try {
-    let movie;
+  if (req.method !== "POST") {
+    return res.status(405).json({ script: "Method not allowed" });
+  }
 
-    if (req.method === "GET") {
-      movie = req.query.movie;
-    } else {
-      const body = typeof req.body === "string"
-        ? JSON.parse(req.body)
-        : req.body;
-      movie = body?.movie;
-    }
+  try {
+    const { movie } = req.body || {};
 
     if (!movie) {
       return res.status(400).json({ script: "No movie provided" });
@@ -22,8 +17,8 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-5-nano",
-        input: `Write a Hindi YouTube movie explanation script for: ${movie}`
+        model: "gpt-4.1-mini",
+        input: `Explain the movie ${movie} in Hindi in simple YouTube narration style.`
       })
     });
 
@@ -31,12 +26,11 @@ export default async function handler(req, res) {
 
     const script =
       data.output?.[0]?.content?.[0]?.text ||
-      data.output_text ||
       "Script generate failed";
 
-    return res.status(200).json({ script });
+    res.status(200).json({ script });
 
   } catch (e) {
-    return res.status(500).json({ script: "Server error" });
+    res.status(500).json({ script: "Server error" });
   }
 }
