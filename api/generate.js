@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  // Allow only POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Only POST allowed" });
   }
@@ -7,7 +8,7 @@ export default async function handler(req, res) {
     const { movie } = req.body;
 
     if (!movie) {
-      return res.status(400).json({ error: "No movie provided" });
+      return res.status(400).json({ error: "No movie name" });
     }
 
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -18,7 +19,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "gpt-5-nano",
-        input: `Explain the movie ${movie} in Hindi in a cinematic storytelling style for a YouTube video script.`,
+        input: `Write a Hindi YouTube movie explanation script for ${movie} in storytelling style.`,
       }),
     });
 
@@ -26,8 +27,7 @@ export default async function handler(req, res) {
 
     const text =
       data.output?.[0]?.content?.[0]?.text ||
-      data.output_text ||
-      "No script generated";
+      "Script generate failed";
 
     res.status(200).json({ script: text });
   } catch (err) {
