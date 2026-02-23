@@ -1,15 +1,12 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const { movie } = req.body;
-
-  if (!movie) {
-    return res.status(400).json({ error: "Movie name required" });
-  }
-
   try {
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    const movie = body?.movie;
+
+    if (!movie) {
+      return res.status(400).json({ script: "No movie provided" });
+    }
+
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
@@ -18,20 +15,20 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "gpt-5-nano",
-        input: `Write a Hindi movie explanation script for ${movie} in YouTube storytelling style.`
+        input: `Write a Hindi YouTube movie explanation script for: ${movie}`
       })
     });
 
     const data = await response.json();
 
-    // ✅ Correct parsing (NEW API)
     const script =
       data.output?.[0]?.content?.[0]?.text ||
+      data.output_text ||
       "Script generate failed";
 
-    res.status(200).json({ script });
+    return res.status(200).json({ script });
 
-  } catch (error) {
-    res.status(500).json({ error: "Server error" });
+  } catch (e) {
+    return res.status(500).json({ script: "Server error" });
   }
 }
