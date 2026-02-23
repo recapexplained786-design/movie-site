@@ -1,7 +1,15 @@
 export default async function handler(req, res) {
   try {
-    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-    const movie = body?.movie;
+    let movie;
+
+    if (req.method === "GET") {
+      movie = req.query.movie;
+    } else {
+      const body = typeof req.body === "string"
+        ? JSON.parse(req.body)
+        : req.body;
+      movie = body?.movie;
+    }
 
     if (!movie) {
       return res.status(400).json({ script: "No movie provided" });
